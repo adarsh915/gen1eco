@@ -1,0 +1,122 @@
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+    <i class="ri-add-line"></i> Add Category
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-body">
+   <!-- Add an id to the table -->
+<table class="table bordered-table mb-0" id="categoryTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Slug</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="categoryTableBody">
+        <tr><td colspan="7" class="text-center">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Category</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Image</label>
+          <input type="file" id="add_image" class="form-control" accept="image/*" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+          <input type="text" id="add_name" class="form-control" placeholder="Enter category name" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Status</label>
+          <select id="add_status" class="form-select">
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Category</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit_id" />
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Image</label>
+          <div class="mb-2">
+            <img id="edit_image_preview" src="" alt="Preview" style="max-height: 80px; display: none; border-radius: 8px; object-fit: cover;" />
+          </div>
+          <input type="file" id="edit_image" class="form-control" accept="image/*" />
+          <small class="text-muted">Leave blank to keep existing image</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+          <input type="text" id="edit_name" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Status</label>
+          <select id="edit_status" class="form-select">
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="updateBtn">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">Delete Category</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="delete_id" />
+        <p>Delete <strong id="delete_name"></strong>?</p>
+        <p class="text-danger text-sm">All sub categories will also be deleted.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# ✅ Load JS file AFTER jQuery via script variable %>
+<% script = '<script src="/js/category.js"><\/script>' %>

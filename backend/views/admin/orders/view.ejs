@@ -1,0 +1,246 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="mb-0">Order <span class="text-primary-600">#<%= order.order_number %></span></h5>
+            <a href="/orders" class="btn btn-secondary btn-sm">
+                <i class="ri-arrow-left-line me-1"></i> Back to Orders
+            </a>
+        </div>
+
+        <div class="row gy-4">
+
+            <!-- LEFT: Order Items -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Order Items</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table bordered-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product</th>
+                                        <th>Variant</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (items && items.length > 0) { %>
+                                        <% items.forEach(function(item, index) { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td>
+                                                <td><span class="fw-medium"><%= item.product_name || '—' %></span></td>
+                                                <td><%= item.variant_name || '—' %></td>
+                                                <td>₹<%= parseFloat(item.price || 0).toFixed(2) %></td>
+                                                <td><%= item.quantity %></td>
+                                                <td class="fw-semibold">
+                                                    ₹<%= parseFloat(item.total || 0).toFixed(2) %>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-3">
+                                                No items found for this order.
+                                            </td>
+                                        </tr>
+                                    <% } %>
+
+                                    <!-- Summary Rows -->
+                                    <tr class="border-top">
+                                        <td colspan="5" class="fw-semibold text-end">Subtotal</td>
+                                        <td class="fw-semibold">₹<%= parseFloat(order.subtotal || 0).toFixed(2) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end text-muted">
+                                            GST (<%= order.gst_percent || 0 %>%)
+                                        </td>
+                                        <td class="text-muted">₹<%= parseFloat(order.tax || 0).toFixed(2) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end text-muted">Shipping</td>
+                                        <td class="text-muted">₹<%= parseFloat(order.shipping_charge || 0).toFixed(2) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end text-muted">Discount</td>
+                                        <td class="text-danger">- ₹<%= parseFloat(order.discount || 0).toFixed(2) %></td>
+                                    </tr>
+                                    <tr class="border-top">
+                                        <td colspan="5" class="fw-bold text-end">Total</td>
+                                        <td class="fw-bold text-success-main fs-6">
+                                            ₹<%= parseFloat(order.total_amount || 0).toFixed(2) %>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Order Info, Payment, Shipping, Update -->
+            <div class="col-md-4">
+
+                <!-- Order Info -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Order Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">User:</span>
+                            <span class="ms-2"><%= order.user_name || '—' %></span>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Email:</span>
+                            <% if (order.user_email) { %>
+                                <a href="mailto:<%= order.user_email %>" class="ms-2 text-primary-600">
+                                    <%= order.user_email %>
+                                </a>
+                            <% } else { %>
+                                <span class="ms-2">—</span>
+                            <% } %>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Phone:</span>
+                            <span class="ms-2"><%= order.user_phone || '—' %></span>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Status:</span>
+                            <%
+                                const statusColors = {
+                                    PENDING:    'bg-warning-focus text-warning-main',
+                                    CONFIRMED:  'bg-primary-light text-primary-600',
+                                    PROCESSING: 'bg-info-focus text-info-main',
+                                    SHIPPED:    'bg-primary-light text-primary-600',
+                                    DELIVERED:  'bg-success-focus text-success-main',
+                                    CANCELLED:  'bg-danger-focus text-danger-main',
+                                    RETURNED:   'bg-danger-focus text-danger-main'
+                                };
+                                const colorClass = statusColors[order.order_status] || 'bg-secondary text-white';
+                            %>
+                            <span class="badge <%= colorClass %> ms-2 px-2 py-1">
+                                <%= order.order_status %>
+                            </span>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Coupon Used:</span>
+                            <% if (order.coupon_code) { %>
+                                <span class="badge bg-success-focus text-success-main ms-2">
+                                    <%= order.coupon_code %>
+                                </span>
+                            <% } else { %>
+                                <span class="ms-2 text-muted">No coupon used</span>
+                            <% } %>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Order Date:</span>
+                            <span class="ms-2">
+                                <%= new Date(order.created_at).toLocaleDateString('en-GB', {
+                                    day: '2-digit', month: 'short', year: 'numeric'
+                                }) %>
+                            </span>
+                        </p>
+                        <p class="mb-0">
+                            <span class="text-muted fw-semibold">Total:</span>
+                            <span class="ms-2 fw-bold text-success-main">
+                                ₹<%= parseFloat(order.total_amount).toFixed(2) %>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Payment</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Method:</span>
+                            <span class="badge bg-primary-100 text-primary-600 ms-2">
+                                <%= order.payment_method || '—' %>
+                            </span>
+                        </p>
+                        <p class="mb-0">
+                            <span class="text-muted fw-semibold">Status:</span>
+                            <span class="ms-2">
+                                <%= order.payment_method === 'COD' ? 'Cash on Delivery' : 'N/A' %>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Shipping -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Shipping</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Charge:</span>
+                            <span class="ms-2">₹<%= parseFloat(order.shipping_charge || 0).toFixed(2) %></span>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-muted fw-semibold">Status:</span>
+                            <span class="ms-2">
+                                <%= ['SHIPPED', 'DELIVERED'].includes(order.order_status) ? order.order_status : 'Pending' %>
+                            </span>
+                        </p>
+                        <hr class="my-3">
+                        <div class="mb-3">
+                            <h6 class="text-sm fw-bold mb-1 text-muted">Shipping Address</h6>
+                            <p class="text-sm mb-0"><%= order.shipping_address || '—' %></p>
+                        </div>
+                        <div class="mb-0">
+                            <h6 class="text-sm fw-bold mb-1 text-muted">Order Notes</h6>
+                            <p class="text-sm mb-0"><%= order.order_notes || 'No notes provided' %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Update Order Status</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="/orders/status/<%= order.id %>" method="POST">
+                            <select name="order_status" class="form-select mb-2">
+                                <% statuses.forEach(function(s) { %>
+                                    <option value="<%= s %>" <%= order.order_status === s ? 'selected' : '' %>>
+                                        <%= s %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="ri-save-line me-1"></i> Update Status
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

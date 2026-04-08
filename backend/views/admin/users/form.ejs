@@ -1,0 +1,139 @@
+<div class="row gy-4">
+    <div class="col-xl-8 offset-xl-2">
+
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0"><%= user ? 'Edit User' : 'Add New User' %></h5>
+                <a href="/admin-users" class="btn btn-secondary btn-sm">
+                    <i class="ri-arrow-left-line me-1"></i> Back
+                </a>
+            </div>
+            <div class="card-body">
+                <form action="/admin-users/<%= user ? 'update' : 'create' %>"
+                      method="POST" enctype="multipart/form-data">
+
+                    <% if (user) { %>
+                        <input type="hidden" name="id" value="<%= user.id %>">
+                    <% } %>
+
+                    <div class="row g-3">
+
+                        <!-- Photo -->
+                        <div class="col-12 text-center">
+                            <% if (user && user.photo) { %>
+                                <img src="/uploads/users/<%= user.photo %>"
+                                     width="80" height="80"
+                                     class="rounded-circle border mb-2"
+                                     style="object-fit:cover;"
+                                     alt="User Photo">
+                                <br>
+                                <small class="text-muted">Leave empty to keep current photo.</small>
+                            <% } %>
+                            <div class="mt-2">
+                                <label class="form-label">Profile Photo</label>
+                                <input type="file" name="photo" class="form-control" accept="image/*">
+                            </div>
+                        </div>
+
+                        <!-- Name -->
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control"
+                                   placeholder="Full Name"
+                                   value="<%= user ? user.name : '' %>" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control"
+                                   placeholder="Email"
+                                   value="<%= user ? user.email : '' %>" required>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control"
+                                   placeholder="Phone"
+                                   value="<%= user ? user.phone || '' : '' %>">
+                        </div>
+
+                        <!-- Role -->
+                        <div class="col-md-6">
+                            <label class="form-label">Role</label>
+                            <select name="role" class="form-select">
+                                <option value="user"  <%= user && user.role === 'user'  ? 'selected' : '' %>>User</option>
+                                <option value="admin" <%= user && user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                            </select>
+                        </div>
+
+                        <!-- DOB -->
+                        <div class="col-md-4">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" name="dob" class="form-control"
+                                   value="<%= user && user.dob ? user.dob.toString().split('T')[0] : '' %>">
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="col-md-4">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">-- Select --</option>
+                                <option value="male"   <%= user && user.gender === 'male'   ? 'selected' : '' %>>Male</option>
+                                <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                                <option value="other"  <%= user && user.gender === 'other'  ? 'selected' : '' %>>Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="1" <%= user && user.status == 1 ? 'selected' : '' %>>Active</option>
+                                <option value="0" <%= user && user.status == 0 ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Password
+                                <% if (user) { %>
+                                    <small class="text-muted">(Leave empty to keep current)</small>
+                                <% } else { %>
+                                    <span class="text-danger">*</span>
+                                <% } %>
+                            </label>
+                            <input type="password" name="password" class="form-control"
+                                   placeholder="Password"
+                                   <%= user ? '' : 'required' %>>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success">
+                                <i class="ri-save-line me-1"></i>
+                                <%= user ? 'Update User' : 'Create User' %>
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

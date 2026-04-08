@@ -1,0 +1,122 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Add GST Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">GST Settings</h5>
+            </div>
+            <div class="card-body">
+                <form action="/gst-settings/create" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">GST Title</label>
+                        <input type="text" name="gst_title" class="form-control"
+                               placeholder="e.g. GST" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">GST Percentage (%)</label>
+                        <input type="number" name="gst_percent" class="form-control"
+                               step="0.01" min="0" placeholder="e.g. 18.00" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" name="status" id="status" checked>
+                        <label for="status" class="form-check-label">Active GST</label>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="ri-save-line me-1"></i> Save GST
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- GST List -->
+        <div class="card basic-data-table">
+            <div class="card-header">
+                <h5 class="card-title mb-0">All GST Settings</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" id="dataTable" data-page-length="10">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Percentage</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (gstList && gstList.length > 0) { %>
+                                <% gstList.forEach(function(gst, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><span class="fw-medium"><%= gst.gst_title %></span></td>
+                                        <td><%= parseFloat(gst.gst_percent).toFixed(2) %>%</td>
+                                        <td>
+                                            <form action="/gst-settings/toggle/<%= gst.id %>" method="POST" class="d-inline">
+                                                <button type="submit"
+                                                        class="btn btn-sm <%= gst.status == 1 ? 'btn-success' : 'btn-secondary' %>"
+                                                        onclick="return confirm('<%= gst.status == 1 ? 'Deactivate' : 'Activate' %> this GST?')">
+                                                    <%= gst.status == 1 ? 'Active' : 'Inactive' %>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <%
+                                                const d = new Date(gst.created_at);
+                                                const formatted = d.toLocaleDateString('en-GB', {
+                                                    day: '2-digit', month: 'short', year: 'numeric'
+                                                });
+                                            %>
+                                            <%= formatted %>
+                                        </td>
+                                        <td>
+                                            <form action="/gst-settings/delete/<%= gst.id %>" method="POST" class="d-inline"
+                                                  onsubmit="return confirm('Delete this GST setting?')">
+                                                <button type="submit"
+                                                        class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                        title="Delete">
+                                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="ri-inbox-line fs-3 d-block mb-2"></i>
+                                        No GST settings found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<% script = `
+<script>
+    (function () { if (typeof DataTable !== 'undefined' && document.querySelector('#dataTable')) { new DataTable('#dataTable'); } })();
+</script>
+` %>

@@ -1,0 +1,77 @@
+<div class="row gy-4">
+    <div class="col-xl-10 offset-xl-1">
+
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Gallery — <span class="text-primary-600"><%= product.product_name %></span></h5>
+                <a href="/products" class="btn btn-secondary btn-sm">
+                    <i class="ri-arrow-left-line me-1"></i> Back
+                </a>
+            </div>
+            <div class="card-body">
+                <form action="/products/gallery/add" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="product_id" value="<%= product.id %>">
+                    <div class="d-flex gap-2 align-items-end">
+                        <div class="flex-grow-1">
+                            <label class="form-label">Add Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="ri-upload-line me-1"></i> Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">Gallery Images (<%= gallery.length %>)</h6>
+            </div>
+            <div class="card-body">
+                <% if (gallery && gallery.length > 0) { %>
+                    <div class="row g-3">
+                        <% gallery.forEach(function(img) { %>
+                            <div class="col-md-3 col-sm-4 col-6">
+                                <div class="card border">
+                                    <img src="/uploads/products/gallery/<%= img.image %>"
+                                         class="card-img-top"
+                                         style="height:150px; object-fit:cover;"
+                                         alt="Gallery Image">
+                                    <div class="card-body p-2 text-center">
+                                        <form action="/products/gallery/delete/<%= img.id %>" method="POST"
+                                              onsubmit="return confirm('Delete this image?')">
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                <iconify-icon icon="mingcute:delete-2-line" class="me-1"></iconify-icon>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center text-muted py-4">
+                        <i class="ri-image-line fs-3 d-block mb-2"></i>
+                        No gallery images yet.
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+    </div>
+</div>

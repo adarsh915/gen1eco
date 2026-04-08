@@ -1,0 +1,120 @@
+<div class="row gy-4">
+    <div class="col-xl-10 offset-xl-1">
+
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Add Variant Form -->
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Variants — <span class="text-primary-600"><%= product.product_name %></span></h5>
+                <a href="/products" class="btn btn-secondary btn-sm">
+                    <i class="ri-arrow-left-line me-1"></i> Back
+                </a>
+            </div>
+            <div class="card-body">
+                <form action="/products/variants/add" method="POST">
+                    <input type="hidden" name="product_id" value="<%= product.id %>">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Variant Name</label>
+                            <input type="text" name="variant_name" class="form-control"
+                                   placeholder="e.g. Size, Color" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Variant Value</label>
+                            <input type="text" name="variant_value" class="form-control"
+                                   placeholder="e.g. XL, Red" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" name="price" class="form-control"
+                                       placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Stock</label>
+                            <input type="number" name="stock" class="form-control"
+                                   placeholder="0" value="0">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="ri-add-line me-1"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Variants List -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">All Variants (<%= variants.length %>)</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Variant Name</th>
+                                <th>Variant Value</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (variants && variants.length > 0) { %>
+                                <% variants.forEach(function(v, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><span class="fw-medium"><%= v.variant_name %></span></td>
+                                        <td><%= v.variant_value %></td>
+                                        <td>₹<%= parseFloat(v.price).toFixed(2) %></td>
+                                        <td>
+                                            <span class="<%= v.stock < 5 ? 'text-danger' : 'text-success-main' %> fw-semibold">
+                                                <%= v.stock %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <form action="/products/variants/delete/<%= v.id %>" method="POST" class="d-inline"
+                                                  onsubmit="return confirm('Delete this variant?')">
+                                                <button type="submit"
+                                                        class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                        title="Delete">
+                                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="ri-layers-line fs-3 d-block mb-2"></i>
+                                        No variants found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

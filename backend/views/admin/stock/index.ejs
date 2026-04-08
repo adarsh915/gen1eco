@@ -1,0 +1,171 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card basic-data-table">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">Stock Management</h5>
+            </div>
+            <div class="card-body">
+
+                <!-- Search -->
+                <form action="/stock" method="GET" class="mb-3">
+                    <div class="input-group" style="max-width:400px;">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Search product or variant..."
+                               value="<%= search %>">
+                        <button class="btn btn-secondary" type="submit">
+                            <i class="ri-search-line"></i> Search
+                        </button>
+                        <% if (search) { %>
+                            <a href="/stock" class="btn btn-outline-secondary">Clear</a>
+                        <% } %>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" style="min-width:1000px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th style="width: 70px;">Image</th>
+                                <th>Product Name</th>
+                                <th>Variant Name</th>
+                                <th>Variant Value</th>
+                                <th>Price</th>
+                                <th style="width: 150px;">Stock Control</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (stockItems && stockItems.length > 0) { %>
+                                <% stockItems.forEach(function(item, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <% if (item.product_image) { %>
+                                                <img src="/uploads/products/<%= item.product_image %>"
+                                                     width="40" height="40"
+                                                     style="object-fit:cover;"
+                                                     class="rounded" alt="Product">
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <a href="/products/edit/<%= item.product_id %>" class="fw-medium text-primary text-decoration-underline"><%= item.product_name %></a>
+                                            <br>
+                                            <small class="text-muted">
+                                                Status: <%= item.product_status === 1 ? 'Active' : 'Inactive' %>
+                                            </small>
+                                        </td>
+                                        <td><%= item.variant_name %></td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border">
+                                                <%= item.variant_value %>
+                                            </span>
+                                        </td>
+                                        <td>₹<%= parseFloat(item.price).toFixed(2) %></td>
+                                        <td>
+                                            <div class="mb-1">
+                                                <% if (item.stock <= 0) { %>
+                                                    <span class="badge bg-danger text-white">Out of Stock</span>
+                                                <% } else if (item.stock <= 5) { %>
+                                                    <span class="badge bg-warning text-dark">Low Stock</span>
+                                                <% } else if (item.stock > 50) { %>
+                                                    <span class="badge bg-success text-white">High Stock</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-info text-white">In Stock</span>
+                                                <% } %>
+                                            </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="number" 
+                                                       class="form-control stock-input <%= item.stock <= 5 ? 'border-danger text-danger fw-bold' : '' %>" 
+                                                       value="<%= item.stock %>" 
+                                                       id="stock-input-<%= item.variant_id %>"
+                                                       min="0">
+                                                <button class="btn btn-success update-stock-btn" 
+                                                        data-variant-id="<%= item.variant_id %>"
+                                                        type="button" 
+                                                        title="Update Stock">
+                                                    <i class="ri-save-line"></i>
+                                                </button>
+                                            </div>
+                                            <small class="text-success stock-update-msg d-none" id="msg-<%= item.variant_id %>">Updated!</small>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">No variants found matching your search.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AJAX Stock Update Logic -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const updateButtons = document.querySelectorAll('.update-stock-btn');
+    
+    updateButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const variantId = this.getAttribute('data-variant-id');
+            const stockInput = document.getElementById('stock-input-' + variantId);
+            const msgSpan = document.getElementById('msg-' + variantId);
+            const newStock = stockInput.value;
+
+            // Change button to indicate loading
+            const originalIcon = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            this.disabled = true;
+
+            fetch('/stock/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ variant_id: variantId, stock: newStock })
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.innerHTML = originalIcon;
+                this.disabled = false;
+                
+                if (data.success) {
+                    msgSpan.classList.remove('d-none');
+                    setTimeout(() => {
+                        msgSpan.classList.add('d-none');
+                    }, 2000);
+                } else {
+                    alert('Error updating stock: ' + data.message);
+                }
+            })
+            .catch(error => {
+                this.innerHTML = originalIcon;
+                this.disabled = false;
+                console.error('Error:', error);
+                alert('Network error occurred while updating stock.');
+            });
+        });
+    });
+});
+</script>

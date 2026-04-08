@@ -1,0 +1,82 @@
+<div class="row gy-4">
+    <div class="col-xl-8 offset-xl-2">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Update Banner</h5>
+            </div>
+            <div class="card-body">
+                <form action="/single-banner/save" method="POST" enctype="multipart/form-data">
+
+                    <!-- Banner Image -->
+                    <div class="mb-3">
+                        <label class="form-label">Banner Image</label>
+                        <% if (banner && banner.image) { %>
+                            <div class="mb-2">
+                                <img src="/uploads/banner/<%= banner.image %>"
+                                     width="150" class="rounded border" alt="Banner Image">
+                            </div>
+                        <% } %>
+                        <input type="file" name="banner_image" class="form-control" accept="image/*">
+                        <% if (banner && banner.image) { %>
+                            <small class="text-muted">Leave empty to keep current image.</small>
+                        <% } %>
+                    </div>
+
+                    <!-- Small Title -->
+                    <div class="mb-3">
+                        <label class="form-label">Small Title</label>
+                        <input type="text" name="title_small" class="form-control"
+                               placeholder="Small Title"
+                               value="<%= banner ? banner.title_small : '' %>" required>
+                    </div>
+
+                    <!-- Big Title -->
+                    <div class="mb-3">
+                        <label class="form-label">Big Title</label>
+                        <input type="text" name="title_big" class="form-control"
+                               placeholder="Big Title"
+                               value="<%= banner ? banner.title_big : '' %>" required>
+                    </div>
+
+                    <!-- Button Text -->
+                    <div class="mb-3">
+                        <label class="form-label">Button Text</label>
+                        <input type="text" name="button_text" class="form-control"
+                               placeholder="Button Text"
+                               value="<%= banner ? banner.button_text : '' %>" required>
+                    </div>
+
+                    <!-- Button Link -->
+                    <div class="mb-3">
+                        <label class="form-label">Button Link</label>
+                        <input type="text" name="link" class="form-control"
+                               placeholder="Button Link"
+                               value="<%= banner ? banner.link : '' %>" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="ri-save-line me-1"></i>
+                        <%= banner ? 'Update Banner' : 'Save Banner' %>
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

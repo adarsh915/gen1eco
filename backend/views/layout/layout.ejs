@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <%- include('../partials/head') %>
+  <body>
+    <%- include('../partials/sidebar') %>
+
+    <main class="dashboard-main">
+      <%- include('../partials/navbar') %>
+
+      <div class="dashboard-main-body">
+        <%- include('../partials/breadcrumb'), {title:title, subTitle:subTitle} %>
+
+        <%# ✅ Only HTML content here, NO scripts yet %>
+        <%- body %>
+      </div>
+
+      <%- include('../partials/footer') %>
+    </main>
+
+    <%# ✅ jQuery and all JS loads here FIRST %>
+    <%- include('../partials/scripts') %>
+
+    <%# ✅ THEN page scripts run — jQuery is now available %>
+    <% if (typeof script !== 'undefined') { %>
+      <%- script %>
+    <% } %>
+
+  </body>
+</html>

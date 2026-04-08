@@ -1,0 +1,219 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="mb-0">Return Requests</h5>
+            <span class="badge bg-primary-100 text-primary-600">
+                Total Returns: <%= returns.length %>
+            </span>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="/order-returns" method="GET">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="">All Status</option>
+                                <% statuses.forEach(function(s) { %>
+                                    <option value="<%= s %>" <%= filters.status === s ? 'selected' : '' %>>
+                                        <%= s %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">From Date</label>
+                            <input type="date" name="from_date" class="form-control"
+                                   value="<%= filters.from_date %>">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">To Date</label>
+                            <input type="date" name="to_date" class="form-control"
+                                   value="<%= filters.to_date %>">
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ri-filter-line me-1"></i> Filter
+                            </button>
+                            <a href="/order-returns" class="btn btn-secondary">
+                                <i class="ri-refresh-line me-1"></i> Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card basic-data-table">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" id="dataTable" data-page-length="10" style="min-width:1000px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Return ID</th>
+                                <th>Order No</th>
+                                <th>User</th>
+                                <th class="d-none d-lg-table-cell">Product</th>
+                                <th class="d-none d-lg-table-cell">Product Price</th>
+                                <th>Refund Amount</th>
+                                <th>Status</th>
+                                <th class="d-none d-md-table-cell">Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (returns && returns.length > 0) { %>
+                                <% returns.forEach(function(ret, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <span class="fw-medium text-primary-600">#<%= ret.id %></span>
+                                        </td>
+                                        <td><%= ret.order_no || '—' %></td>
+                                        <td>
+                                            <span class="fw-medium"><%= ret.user_name || '—' %></span>
+                                            <% if (ret.user_email) { %>
+                                                <br><small class="text-muted"><%= ret.user_email %></small>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <%= ret.product_name || '—' %>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <% if (ret.product_price) { %>
+                                                ₹<%= parseFloat(ret.product_price).toFixed(2) %>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (ret.refund_amount) { %>
+                                                <span class="text-success-main fw-semibold">
+                                                    ₹<%= parseFloat(ret.refund_amount).toFixed(2) %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <%
+                                                const statusColors = {
+                                                    REQUESTED: 'bg-warning-focus text-warning-main',
+                                                    APPROVED:  'bg-success-focus text-success-main',
+                                                    PICKED:    'bg-primary-light text-primary-600',
+                                                    REFUNDED:  'bg-success-focus text-success-main',
+                                                    REJECTED:  'bg-danger-focus text-danger-main'
+                                                };
+                                                const colorClass = statusColors[ret.status] || 'bg-secondary text-white';
+                                            %>
+                                            <span class="badge <%= colorClass %> px-2 py-1">
+                                                <%= ret.status %>
+                                            </span>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <%
+                                                const d = new Date(ret.created_at);
+                                                const formatted = d.toLocaleDateString('en-GB', {
+                                                    day: '2-digit', month: 'short', year: 'numeric'
+                                                });
+                                            %>
+                                            <%= formatted %>
+                                        </td>
+                                        <td>
+                                            <!-- Update Status -->
+                                            <button type="button"
+                                                    class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#statusModal<%= ret.id %>"
+                                                    title="Update Status">
+                                                <iconify-icon icon="lucide:edit"></iconify-icon>
+                                            </button>
+                                            <!-- Delete -->
+                                            <form action="/order-returns/delete/<%= ret.id %>" method="POST" class="d-inline"
+                                                  onsubmit="return confirm('Delete this return request?')">
+                                                <button type="submit"
+                                                        class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                        title="Delete">
+                                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Status Update Modal -->
+                                    <div class="modal fade" id="statusModal<%= ret.id %>" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Update Return Status</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form action="/order-returns/status/<%= ret.id %>" method="POST">
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <p class="text-muted mb-3">
+                                                                Return ID: <strong>#<%= ret.id %></strong> |
+                                                                Order: <strong><%= ret.order_no || '—' %></strong>
+                                                            </p>
+                                                            <label class="form-label">Select New Status</label>
+                                                            <select name="status" class="form-select">
+                                                                <% statuses.forEach(function(s) { %>
+                                                                    <option value="<%= s %>" <%= ret.status === s ? 'selected' : '' %>>
+                                                                        <%= s %>
+                                                                    </option>
+                                                                <% }); %>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Update Status</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="10" class="text-center text-muted py-4">
+                                        <i class="ri-inbox-line fs-3 d-block mb-2"></i>
+                                        No return requests found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<% script = `
+<script>
+    (function () { if (typeof DataTable !== 'undefined' && document.querySelector('#dataTable')) { new DataTable('#dataTable'); } })();
+</script>
+` %>

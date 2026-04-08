@@ -1,0 +1,182 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card basic-data-table">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">Products</h5>
+                <a href="/products/add" class="btn btn-primary btn-sm">
+                    <i class="ri-add-line me-1"></i> Add New Product
+                </a>
+            </div>
+            <div class="card-body">
+
+                <!-- Search -->
+                <form action="/products" method="GET" class="mb-3">
+                    <div class="input-group" style="max-width:400px;">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Search by name or category"
+                               value="<%= search %>">
+                        <button class="btn btn-secondary" type="submit">
+                            <i class="ri-search-line"></i> Search
+                        </button>
+                        <% if (search) { %>
+                            <a href="/products" class="btn btn-outline-secondary">Clear</a>
+                        <% } %>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" style="min-width:1100px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th class="d-none d-lg-table-cell">Category</th>
+                                <th class="d-none d-lg-table-cell">Sub Category</th>
+                                <th class="d-none d-xl-table-cell">Sub Sub</th>
+                                <th>Price</th>
+                                <th class="d-none d-md-table-cell">Sale Price</th>
+                                <th class="d-none d-md-table-cell">Stock</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (products && products.length > 0) { %>
+                                <% products.forEach(function(product, index) { %>
+                                    <tr>
+                                        <td><%= ((page - 1) * 10) + index + 1 %></td>
+                                        <td>
+                                            <% if (product.product_image) { %>
+                                                <img src="/uploads/products/<%= product.product_image %>"
+                                                     width="50" height="50"
+                                                     style="object-fit:cover;"
+                                                     class="rounded" alt="Product">
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium"><%= product.product_name %></span>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <% if (product.categories && product.categories.length > 0) { %>
+                                                <%= product.categories.map(c => c.name).join(', ') %>
+                                            <% } else { %>
+                                                <%= product.category_name || '—' %>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <%= product.sub_category_name || '—' %>
+                                        </td>
+                                        <td class="d-none d-xl-table-cell">
+                                            <%= product.sub_sub_category_name || '—' %>
+                                        </td>
+                                        <td>₹<%= parseFloat(product.price).toFixed(2) %></td>
+                                        <td class="d-none d-md-table-cell">
+                                            <% if (product.sale_price) { %>
+                                                <span class="text-success-main">
+                                                    ₹<%= parseFloat(product.sale_price).toFixed(2) %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <% if (product.stock <= 0) { %>
+                                                <span class="badge bg-danger-focus text-danger-main">Out of Stock</span>
+                                            <% } else if (product.stock <= 5) { %>
+                                                <span class="badge bg-warning-focus text-warning-main">Low Stock (<%= product.stock %>)</span>
+                                            <% } else { %>
+                                                <span class="text-success-main fw-semibold"><%= product.stock %></span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <form action="/products/toggle/<%= product.id %>" method="POST" class="d-inline">
+                                                <button type="submit"
+                                                        class="badge border-0 <%= product.status == 1 ? 'bg-success-focus text-success-main' : 'bg-danger-focus text-danger-main' %>"
+                                                        onclick="return confirm('<%= product.status == 1 ? 'Deactivate' : 'Activate' %> this product?')">
+                                                    <%= product.status == 1 ? 'Active' : 'Inactive' %>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                <a href="/stock?search=<%= encodeURIComponent(product.product_name) %>"
+                                                   class="w-32-px h-32-px bg-info-focus text-info-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                   title="Manage Variant Stocks">
+                                                    <iconify-icon icon="lucide:layers"></iconify-icon>
+                                                </a>
+                                                <a href="/products/edit/<%= product.id %>"
+                                                   class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                   title="Edit">
+                                                    <iconify-icon icon="lucide:edit"></iconify-icon>
+                                                </a>
+                                                <a href="/products/gallery/<%= product.id %>"
+                                                   class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                   title="Gallery">
+                                                    <iconify-icon icon="solar:gallery-linear"></iconify-icon>
+                                                </a>
+                                                <a href="/products/variants/<%= product.id %>"
+                                                   class="w-32-px h-32-px bg-warning-focus text-warning-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                   title="Variants">
+                                                    <iconify-icon icon="lucide:layers"></iconify-icon>
+                                                </a>
+                                                <form action="/products/delete/<%= product.id %>" method="POST" class="d-inline"
+                                                      onsubmit="return confirm('Delete this product?')">
+                                                    <button type="submit"
+                                                            class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                            title="Delete">
+                                                        <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="11" class="text-center text-muted py-4">
+                                        <i class="ri-box-3-line fs-3 d-block mb-2"></i>
+                                        No products found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                    <nav class="mt-4">
+                        <ul class="pagination">
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= page === i ? 'active' : '' %>">
+                                    <a class="page-link" href="/products?page=<%= i %>&search=<%= search %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } %>
+
+            </div>
+        </div>
+    </div>
+</div>

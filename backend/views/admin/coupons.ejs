@@ -1,0 +1,185 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Add Coupon Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Add New Coupon</h5>
+            </div>
+            <div class="card-body">
+                <form action="/coupons/create" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Coupon Code</label>
+                            <input type="text" name="code" class="form-control"
+                                   placeholder="e.g. SAVE20" required
+                                   style="text-transform:uppercase;">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Discount Type</label>
+                            <select name="discount_type" class="form-select">
+                                <option value="fixed">Fixed</option>
+                                <option value="percentage">Percentage</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Discount Value</label>
+                            <input type="number" step="0.01" name="discount_value"
+                                   class="form-control" placeholder="e.g. 10.00" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Min Order Amount</label>
+                            <input type="number" step="0.01" name="min_order_amount"
+                                   class="form-control" placeholder="0.00" value="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Max Discount <span class="text-muted">(Optional)</span></label>
+                            <input type="number" step="0.01" name="max_discount_amount"
+                                   class="form-control" placeholder="Optional">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" name="expiry_date" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success">
+                                <i class="ri-add-line me-1"></i> Add Coupon
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Coupon List -->
+        <div class="card basic-data-table">
+            <div class="card-header">
+                <h5 class="card-title mb-0">All Coupons</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" id="dataTable" data-page-length="10">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Code</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th class="d-none d-md-table-cell">Min Order</th>
+                                <th class="d-none d-lg-table-cell">Max Discount</th>
+                                <th class="d-none d-md-table-cell">Expiry</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (coupons && coupons.length > 0) { %>
+                                <% coupons.forEach(function(coupon, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <span class="badge bg-primary-100 text-primary-600 fw-semibold px-2 py-1">
+                                                <%= coupon.code %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge <%= coupon.discount_type === 'percentage' ? 'bg-success-focus text-success-main' : 'bg-warning-focus text-warning-main' %> px-2 py-1">
+                                                <%= coupon.discount_type === 'percentage' ? 'Percentage' : 'Fixed' %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% if (coupon.discount_type === 'percentage') { %>
+                                                <%= parseFloat(coupon.discount_value).toFixed(2) %>%
+                                            <% } else { %>
+                                                ₹<%= parseFloat(coupon.discount_value).toFixed(2) %>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            ₹<%= parseFloat(coupon.min_order_amount || 0).toFixed(2) %>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <% if (coupon.max_discount_amount) { %>
+                                                ₹<%= parseFloat(coupon.max_discount_amount).toFixed(2) %>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <% if (coupon.expiry_date) { %>
+                                                <%
+                                                    const expiry = new Date(coupon.expiry_date);
+                                                    const today  = new Date();
+                                                    const expired = expiry < today;
+                                                %>
+                                                <span class="<%= expired ? 'text-danger' : 'text-success-main' %>">
+                                                    <%= expiry.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) %>
+                                                    <%= expired ? '(Expired)' : '' %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-muted">No Expiry</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <form action="/coupons/toggle/<%= coupon.id %>" method="POST" class="d-inline">
+                                                <button type="submit"
+                                                        class="btn btn-sm <%= coupon.status == 1 ? 'btn-success' : 'btn-secondary' %>"
+                                                        onclick="return confirm('<%= coupon.status == 1 ? 'Deactivate' : 'Activate' %> this coupon?')">
+                                                    <%= coupon.status == 1 ? 'Active' : 'Inactive' %>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <form action="/coupons/delete/<%= coupon.id %>" method="POST" class="d-inline"
+                                                  onsubmit="return confirm('Delete this coupon?')">
+                                                <button type="submit"
+                                                        class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                        title="Delete">
+                                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="ri-ticket-line fs-3 d-block mb-2"></i>
+                                        No coupons found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<% script = `
+<script>
+    (function () { if (typeof DataTable !== 'undefined' && document.querySelector('#dataTable')) { new DataTable('#dataTable'); } })();
+</script>
+` %>

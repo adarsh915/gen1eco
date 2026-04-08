@@ -1,0 +1,107 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card basic-data-table">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">Home Three Boxes List</h5>
+                <a href="/three-boxes/add" class="btn btn-primary btn-sm">
+                    <i class="ri-add-line me-1"></i> Add New
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" id="dataTable" data-page-length="10">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>Heading</th>
+                                <th class="d-none d-md-table-cell">Sub Heading</th>
+                                <th class="d-none d-lg-table-cell">Button Text</th>
+                                <th class="d-none d-lg-table-cell">Button Link</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (boxes && boxes.length > 0) { %>
+                                <% boxes.forEach(function(box, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <% if (box.image) { %>
+                                                <img src="/uploads/banner/<%= box.image %>"
+                                                     width="70" class="rounded" alt="Box Image">
+                                            <% } else { %>
+                                                <span class="text-muted">No Image</span>
+                                            <% } %>
+                                        </td>
+                                        <td><span class="fw-medium"><%= box.heading %></span></td>
+                                        <td class="d-none d-md-table-cell"><%= box.sub_heading %></td>
+                                        <td class="d-none d-lg-table-cell"><%= box.button_text %></td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <a href="<%= box.button_link %>" target="_blank" class="text-primary-600">
+                                                <%= box.button_link %>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <form action="/three-boxes/toggle/<%= box.id %>" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm <%= box.status == 1 ? 'btn-success' : 'btn-secondary' %>"
+                                                        onclick="return confirm('<%= box.status == 1 ? 'Deactivate' : 'Activate' %> this box?')">
+                                                    <%= box.status == 1 ? 'Active' : 'Inactive' %>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a href="/three-boxes/edit/<%= box.id %>"
+                                               class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                               title="Edit">
+                                                <iconify-icon icon="lucide:edit"></iconify-icon>
+                                            </a>
+                                            <form action="/three-boxes/delete/<%= box.id %>" method="POST" class="d-inline"
+                                                  onsubmit="return confirm('Delete this box?')">
+                                                <button type="submit"
+                                                        class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                        title="Delete">
+                                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="ri-inbox-line fs-3 d-block mb-2"></i>
+                                        No boxes found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<% script = `
+<script>
+    (function () { if (typeof DataTable !== 'undefined' && document.querySelector('#dataTable')) { new DataTable('#dataTable'); } })();
+</script>
+` %>

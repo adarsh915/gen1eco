@@ -1,0 +1,86 @@
+<div class="page-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+          <h4 class="mb-sm-0">Main Slider</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Settings</a></li>
+              <li class="breadcrumb-item active">Main Slider</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+
+
+      <!-- List -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title mb-0">Existing Sliders</h4>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered" id="dataTable" data-page-length="10">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Images</th>
+                  <th>Headings</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (sliders && sliders.length > 0) { %>
+                  <% sliders.forEach(s => { %>
+                    <tr>
+                      <td><%= s.sort_order %></td>
+                      <td>
+                        <% if(s.image_small) { %>
+                          <img src="/uploads/sliders/<%= s.image_small %>" width="50" class="me-2" style="object-fit:cover; border-radius:4px;">
+                        <% } %>
+                        <% if(s.image_large) { %>
+                          <img src="/uploads/sliders/<%= s.image_large %>" width="100">
+                        <% } %>
+                      </td>
+                      <td>
+                        <strong><%= s.heading_main %></strong><br>
+                        <small class="text-muted"><%= s.heading_small %></small>
+                      </td>
+                      <td>
+                        <span class="badge border border-<%= s.status === 1 ? 'success text-success' : 'danger text-danger' %>"><%= s.status === 1 ? 'Active' : 'Inactive' %></span>
+                      </td>
+                      <td>
+                        <a href="/main-slider/edit/<%= s.id %>" class="btn btn-sm btn-primary me-1">Edit</a>
+                        <a href="/main-slider/delete/<%= s.id %>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr><td colspan="5" class="text-center">No sliders found.</td></tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<% script = `
+<script>
+    (function () { if (typeof DataTable !== 'undefined' && document.querySelector('#dataTable')) { new DataTable('#dataTable'); } })();
+</script>
+` %>

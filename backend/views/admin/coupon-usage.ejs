@@ -1,0 +1,121 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i> <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="card basic-data-table">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">Coupon Usage Report</h5>
+                <span class="badge bg-primary-100 text-primary-600">
+                    Total: <%= usageList.length %>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table bordered-table mb-0" id="dataTable" data-page-length="10" style="min-width:900px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Coupon</th>
+                                <th>User</th>
+                                <th class="d-none d-md-table-cell">Email</th>
+                                <th class="d-none d-md-table-cell">Order No</th>
+                                <th class="d-none d-lg-table-cell">Order Amount</th>
+                                <th class="d-none d-md-table-cell">Used At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (usageList && usageList.length > 0) { %>
+                                <% usageList.forEach(function(usage, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <% if (usage.coupon_code) { %>
+                                                <span class="badge bg-primary-100 text-primary-600 fw-semibold px-2 py-1">
+                                                    <%= usage.coupon_code %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium">
+                                                <%= usage.user_name || '—' %>
+                                            </span>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <% if (usage.user_email) { %>
+                                                <a href="mailto:<%= usage.user_email %>" class="text-primary-600">
+                                                    <%= usage.user_email %>
+                                                </a>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <%= usage.order_no || '—' %>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <% if (usage.order_amount) { %>
+                                                ₹<%= parseFloat(usage.order_amount).toFixed(2) %>
+                                            <% } else { %>
+                                                <span class="text-muted">—</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <%
+                                                const d = new Date(usage.used_at);
+                                                const formatted = d.toLocaleString('en-GB', {
+                                                    day: '2-digit', month: 'short', year: 'numeric',
+                                                    hour: '2-digit', minute: '2-digit'
+                                                });
+                                            %>
+                                            <%= formatted %>
+                                        </td>
+                                        <td>
+                                            <form action="/coupon-usage/delete/<%= usage.id %>" method="POST" class="d-inline"
+                                                  onsubmit="return confirm('Delete this usage record?')">
+                                                <button type="submit"
+                                                        class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                        title="Delete">
+                                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="ri-ticket-line fs-3 d-block mb-2"></i>
+                                        No coupon usage found.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<% script = `
+<script>
+    (function () { if (typeof DataTable !== 'undefined' && document.querySelector('#dataTable')) { new DataTable('#dataTable'); } })();
+</script>
+` %>

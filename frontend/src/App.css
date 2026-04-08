@@ -1,0 +1,459 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* deep-clean css */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── Hero Banner ── */
+        .dc-hero {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          background: url('../images/page_banner_bg.webp') center/cover no-repeat;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .dc-hero::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: rgba(30, 40, 55, 0.55);
+        }
+        .dc-hero__content {
+          position: relative;
+          z-index: 1;
+          text-align: center;
+          color: #fff;
+        }
+        .dc-hero__title {
+          font-size: 54px;
+          font-weight: 500;
+          letter-spacing: -0.5px;
+          margin-bottom: 10px;
+          text-shadow: 0 2px 12px rgba(0,0,0,.3);
+        }
+        .dc-hero__breadcrumb {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-size: 0.88rem;
+          color: rgba(255,255,255,0.88);
+        }
+		  
+        .dc-hero__breadcrumb svg { opacity: 0.9; }
+        .dc-hero__breadcrumb-sep { opacity: 2.7; font-size: 1.35rem; }
+        .dc-hero__breadcrumb a {
+		font-size: 16px;
+		font-weight:400;
+          color: rgba(255,255,255,0.88);
+          text-decoration: none;
+          transition: color .2s;
+        }
+        .dc-hero__breadcrumb a:hover { color: #fff; }
+
+        /* ── Root ── */
+        .plc-root {
+          background: #ffffff;
+          min-height: 100vh;
+          padding: 80px 20px 48px;
+        }
+
+        /* ── Mobile filter toggle ── */
+        .plc-filter-toggle {
+          display: none;
+          align-items: center;
+          gap: 8px;
+          background: #fff;
+          border: 1.5px solid #e5e7eb;
+          border-radius: 10px;
+          padding: 10px 16px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #374151;
+          cursor: pointer;
+          margin-bottom: 16px;
+          width: 100%;
+          transition: border-color .2s, background .2s;
+        }
+        .plc-filter-toggle:hover { border-color: #3b82f6; background: #f0f7ff; }
+
+        /* ── Layout ── */
+        .plc-layout {
+          display: flex;
+          gap: 28px;
+          max-width: 1240px;
+          margin: 0 auto;
+          align-items: flex-start;
+        }
+
+        /* ── Sidebar ── */
+        .plc-sidebar {
+          width: 260px;
+          min-width: 240px;
+          flex-shrink: 0;
+          position: sticky;
+        }
+
+        .plc-sidebar__section { margin-bottom: 26px; }
+        .plc-sidebar__section:last-child { margin-bottom: 0; }
+
+        .plc-sidebar__heading {
+          font-size: 1.95rem;
+          font-weight: 700;
+          color: #111827;
+          margin-bottom: 12px;
+        }
+
+        .plc-search {
+          width: 100%;
+          padding: 10px 14px;
+          border: 1.5px solid #e5e7eb;
+          border-radius: 10px;
+          font-size: 1rem;
+    font-weight: 400;
+          color: #374151;
+          background: #f9fafb;
+          outline: none;
+          transition: border-color .2s, box-shadow .2s;
+        }
+        .plc-search:focus {
+          border-color: #3b82f6;
+          background: #fff;
+          box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+        }
+        .plc-search::placeholder { color: #9ca3af; }
+
+        .plc-divider {
+          border: none;
+          border-top: 1.5px solid #f3f4f6;
+          margin: 0 0 22px;
+        }
+
+        .plc-range-wrap { padding-bottom: 4px; }
+        .plc-range {
+          -webkit-appearance: none;
+          width: 100%;
+          height: 4px;
+          border-radius: 4px;
+          background: linear-gradient(to right, #ef4444 0%, #ef4444 var(--val, 100%), #e5e7eb var(--val, 100%));
+          outline: none;
+          cursor: pointer;
+        }
+        .plc-range::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 18px; height: 18px;
+          border-radius: 50%;
+          background: #fff;
+          border: 2.5px solid #ef4444;
+          box-shadow: 0 2px 6px rgba(239,68,68,.3);
+          transition: transform .15s;
+        }
+        .plc-range::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .plc-range-value {
+          display: block;
+          margin-top: 10px;
+          font-size: 0.84rem;
+          color: #6b7280;
+          font-weight: 600;
+        }
+
+        .plc-checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          color: #374151;
+          user-select: none;
+        }
+        .plc-checkbox {
+          width: 16px; height: 16px;
+          accent-color: #3b82f6;
+          cursor: pointer;
+        }
+
+        /* ── Main ── */
+        .plc-main { flex: 1; min-width: 0; }
+
+        .plc-results-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 20px;
+        }
+        .plc-results-count {
+          font-size: 0.85rem;
+          color: #6b7280;
+        }
+        .plc-results-count strong { color: #111827; }
+
+        .plc-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+        }
+
+        .plc-empty {
+          grid-column: 1 / -1;
+          text-align: center;
+          padding: 60px 20px;
+          color: #9ca3af;
+          font-size: 0.95rem;
+        }
+
+        /* ────────────────────────────────
+           CARD STYLES — UPDATED SECTION
+        ──────────────────────────────── */
+
+        /* Card: white with border outline + soft shadow */
+        .plc-card {
+          background: #fff;
+          border-radius: 18px;
+          overflow: hidden;
+          border: 1.5px solid #e8eaed;
+          box-shadow: 0 2px 10px rgba(0,0,0,.05);
+          transition: box-shadow .25s, transform .25s, border-color .25s;
+          cursor: pointer;
+        }
+        .plc-card:hover {
+          box-shadow: 0 8px 28px rgba(0,0,0,.11);
+          border-color: #d1d5db;
+          transform: translateY(-2px);
+        }
+
+        /* Image wrap: inset 10px margin + rounded corners */
+        .plc-card__image-wrap {
+          position: relative;
+          background: #f5f6f8;
+          aspect-ratio: 1 / 1;
+          overflow: hidden;
+          margin: 10px 10px 0 10px;
+          border-radius: 12px;
+        }
+
+        .plc-card__image {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 18px;
+          transition: transform .35s ease;
+        }
+        .plc-card:hover .plc-card__image { transform: scale(1.04); }
+
+        /* Badges: blue pills top-left (both same blue like your image) */
+        .plc-card__badges {
+          position: absolute;
+          top: 10px; left: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          z-index: 2;
+        }
+        .plc-badge {
+          display: inline-block;
+          padding: 4px 11px;
+          border-radius: 20px;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: .2px;
+        }
+        .plc-badge--discount { background: #3b82f6; color: #fff; }
+        .plc-badge--stock    { background: #3b82f6; color: #fff; }
+
+        /* Action buttons: hidden, slide in from right on hover */
+        .plc-card__actions {
+          position: absolute;
+          top: 10px; right: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 7px;
+          z-index: 2;
+          opacity: 0;
+          transform: translateX(10px);
+          transition: opacity .22s ease, transform .22s ease;
+          pointer-events: none;
+        }
+        .plc-card__actions--visible {
+          opacity: 1;
+          transform: translateX(0);
+          pointer-events: all;
+        }
+
+        /* White circle buttons with drop shadow (matching image 2) */
+        .plc-action-btn {
+          width: 38px; height: 38px;
+          border-radius: 50%;
+          border: none;
+           background: #1f2937;     /* ← black background */
+  color: #fff;   
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background .2s, box-shadow .2s, transform .15s;
+          box-shadow: 0 2px 10px rgba(0,0,0,.14);
+        }
+        .plc-action-btn:hover {
+          background: #f3f4f6;
+          box-shadow: 0 4px 14px rgba(0,0,0,.18);
+          transform: scale(1.08);
+        }
+        /* Heart stays white bg, just icon turns red */
+        .plc-action-btn--wishlisted { background: #fff !important; }
+
+        /* ── Card info ── */
+        .plc-card__info { padding: 14px 16px 18px; }
+
+        .plc-card__title {
+           color: #333333;
+    font-size: 18px;
+    font-weight: 600;
+         
+          margin-bottom: 8px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .plc-card__pricing {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+        .plc-price--current {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #111827;
+        }
+        .plc-price--original {
+          font-size: 0.8rem;
+          color: #9ca3af;
+          text-decoration: line-through;
+        }
+
+        .plc-card__rating {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .plc-stars { display: flex; gap: 1px; }
+        .plc-star { font-size: 1.23rem; }
+        .plc-star--filled {     color: #6e6a64; }
+        .plc-star--empty { color: #d1d5db; }
+        .plc-rating__count { font-size: 0.76rem; color: #9ca3af; }
+
+        /* ── Hero responsive ── */
+        @media (max-width: 640px) {
+          .dc-hero { height: 150px; }
+        }
+
+        /* ── Tablet (sidebar drawer) ── */
+        @media (max-width: 900px) {
+          .plc-filter-toggle { display: flex; }
+
+          .plc-layout { flex-direction: column; gap: 0; }
+
+          .plc-sidebar {
+            width: 100%;
+            min-width: unset;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 999;
+            border-radius: 0 20px 20px 0;
+            overflow-y: auto;
+            transform: translateX(-110%);
+            opacity: 0;
+            box-shadow: 4px 0 24px rgba(0,0,0,.18);
+          }
+          .plc-sidebar--open {
+            transform: translateX(0);
+            opacity: 1;
+          }
+
+          .plc-sidebar-overlay {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.4);
+            z-index: 998;
+            animation: fadeIn .2s ease;
+          }
+
+          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+          .plc-sidebar__close {
+            display: flex !important;
+          }
+
+          .plc-main { width: 100%; }
+          .plc-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+          .plc-root { padding: 20px 14px 40px; }
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 480px) {
+          .plc-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+          .plc-card__title { font-size: 0.82rem; }
+          .plc-price--current { font-size: 0.9rem; }
+        }
+
+        @media (max-width: 320px) {
+          .plc-grid { grid-template-columns: 1fr; }
+        }
+
+        .plc-sidebar__close {
+          display: none;
+          align-items: center;
+          justify-content: flex-end;
+          margin-bottom: 20px;
+        }
+        .plc-close-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #6b7280;
+          padding: 4px;
+          transition: color .2s;
+        }
+        .plc-close-btn:hover { color: #111827; }

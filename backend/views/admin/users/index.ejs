@@ -1,0 +1,420 @@
+<div class="row gy-4">
+    <div class="col-12">
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ri-checkbox-circle-line me-2"></i>
+                <%= success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <% } %>
+                <% if (error) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="ri-error-warning-line me-2"></i>
+                        <%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <% } %>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="card h-100">
+                                    <div class="card-body p-16">
+                                        <p class="text-sm text-secondary-light mb-6">Total Users</p>
+                                        <h6 id="totalUsersCount" class="mb-0">
+                                            <%= stats.total %>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="card h-100">
+                                    <div class="card-body p-16">
+                                        <p class="text-sm text-secondary-light mb-6">Active Users</p>
+                                        <h6 id="activeUsersCount" class="mb-0 text-success-main">
+                                            <%= stats.active %>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="card h-100">
+                                    <div class="card-body p-16">
+                                        <p class="text-sm text-secondary-light mb-6">Blocked Users</p>
+                                        <h6 id="blockedUsersCount" class="mb-0 text-danger-main">
+                                            <%= stats.blocked %>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="card h-100">
+                                    <div class="card-body p-16">
+                                        <p class="text-sm text-secondary-light mb-6">Online Users</p>
+                                        <h6 id="onlineUsersCount" class="mb-0 text-primary-main">
+                                            <%= stats.online %>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="card h-100">
+                                    <div class="card-body p-16">
+                                        <p class="text-sm text-secondary-light mb-6">Offline Users</p>
+                                        <h6 id="offlineUsersCount" class="mb-0 text-warning-main">
+                                            <%= stats.offline %>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card basic-data-table">
+                            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                <h5 class="card-title mb-0">User Accounts</h5>
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <button type="button" id="bulkActivateBtn" class="btn btn-success btn-sm">
+                                        <i class="ri-checkbox-circle-line me-1"></i> Bulk Activate
+                                    </button>
+                                    <button type="button" id="bulkBlockBtn" class="btn btn-warning btn-sm">
+                                        <i class="ri-forbid-line me-1"></i> Bulk Block
+                                    </button>
+                                    <button type="button" id="bulkLogoutBtn" class="btn btn-info btn-sm">
+                                        <i class="ri-logout-box-r-line me-1"></i> Bulk Logout
+                                    </button>
+                                    <a href="/admin-users/add" class="btn btn-primary btn-sm">
+                                        <i class="ri-add-line me-1"></i> Add User
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table bordered-table mb-0" id="userTable" data-page-length="10">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 56px;">
+                                                    <input type="checkbox" id="selectAllUsers" class="form-check-input"
+                                                        style="width: 18px; height: 18px;" title="Select all users">
+                                                </th>
+                                                <th>#</th>
+                                                <th>User</th>
+                                                <th class="d-none d-md-table-cell">Email</th>
+                                                <th class="d-none d-lg-table-cell">Phone</th>
+                                                <th class="d-none d-md-table-cell">Role</th>
+                                                <th>Login Status</th>
+                                                <th>Status</th>
+                                                <th class="d-none d-lg-table-cell">Created</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (users && users.length> 0) { %>
+                                                <% users.forEach(function(user, index) { %>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input type="checkbox"
+                                                                class="bulk-user-checkbox form-check-input"
+                                                                style="width: 18px; height: 18px;"
+                                                                data-user-id="<%= user.id %>">
+                                                        </td>
+                                                        <td class="user-serial">#<%= index + 1 %>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <img src="<%= user.photo ? '/uploads/users/' + user.photo : '/images/user-list/user-list1.png' %>"
+                                                                    width="36" height="36" class="rounded-circle border"
+                                                                    style="object-fit:cover;" alt="<%= user.name %>" onerror="this.onerror=null;this.src='/images/user-list/user-list1.png';">
+                                                                <span class="fw-medium">
+                                                                    <%= user.name %>
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="d-none d-md-table-cell">
+                                                            <a href="mailto:<%= user.email %>" class="text-primary-600">
+                                                                <%= user.email %>
+                                                            </a>
+                                                        </td>
+                                                        <td class="d-none d-lg-table-cell">
+                                                            <%= user.phone || '—' %>
+                                                        </td>
+                                                        <td class="d-none d-md-table-cell">
+                                                            <span class="badge bg-info-focus text-info-main px-2 py-1">
+                                                                <%= user.role==='admin' ? 'Admin' : 'User' %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span
+                                                                class="badge user-login-badge <%= user.logged_in == 1 ? 'bg-success-focus text-success-main' : 'bg-secondary-focus text-danger-main' %> px-2 py-1"
+                                                                data-user-id="<%= user.id %>">
+                                                                <%= user.logged_in==1 ? '🟢 Online' : '🔴 Offline' %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span
+                                                                class="badge user-status-badge <%= user.status == 1 ? 'bg-success-focus text-success-main' : 'bg-danger-focus text-danger-main' %> px-2 py-1"
+                                                                data-user-id="<%= user.id %>">
+                                                                <%= user.status==1 ? 'Active' : 'Inactive' %>
+                                                            </span>
+                                                        </td>
+                                                        <td class="d-none d-lg-table-cell">
+                                                            <% const d=new Date(user.created_at); const
+                                                                formatted=d.toLocaleDateString('en-GB', { day: '2-digit'
+                                                                , month: 'short' , year: 'numeric' }); %>
+                                                                <%= formatted %>
+                                                        </td>
+                                                        <td>
+                                                            <!-- Edit -->
+                                                            <a href="/admin-users/edit/<%= user.id %>"
+                                                                class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                                title="Edit">
+                                                                <i class="ri-edit-line"></i>
+                                                            </a>
+                                                            <!-- Toggle Status -->
+                                                            <form action="/admin-users/toggle/<%= user.id %>"
+                                                                method="POST" class="d-inline"
+                                                                onsubmit="return confirm('Change user status?')">
+                                                                <button type="submit"
+                                                                    class="w-32-px h-32-px bg-warning-focus text-warning-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                                    title="Toggle Status">
+                                                                    <i class="ri-refresh-line"></i>
+                                                                </button>
+                                                            </form>
+                                                            <!-- Force Logout (only for users) -->
+                                                            <% if (user.role==='user' ) { %>
+                                                                <form action="/admin-users/force-logout/<%= user.id %>"
+                                                                    method="POST" class="d-inline"
+                                                                    onsubmit="return confirm('Force logout this user?')">
+                                                                    <button type="submit"
+                                                                        class="w-32-px h-32-px bg-info-focus text-info-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                                        title="Force Logout">
+                                                                        <i class="ri-logout-box-r-line"></i>
+                                                                    </button>
+                                                                </form>
+                                                                <% } %>
+                                                                    <!-- Delete -->
+                                                                    <form action="/admin-users/delete/<%= user.id %>"
+                                                                        method="POST" class="d-inline"
+                                                                        onsubmit="return confirm('Delete this user?')">
+                                                                        <button type="submit"
+                                                                            class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
+                                                                            title="Delete">
+                                                                            <i class="ri-delete-bin-line"></i>
+                                                                        </button>
+                                                                    </form>
+                                                        </td>
+                                                    </tr>
+                                                    <% }); %>
+                                                        <% } else { %>
+                                                            <tr>
+                                                                <td colspan="10" class="text-center text-muted py-4">
+                                                                    <i class="ri-user-line fs-3 d-block mb-2"></i>
+                                                                    No users found.
+                                                                </td>
+                                                            </tr>
+                                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+    </div>
+</div>
+
+<form id="bulkActionForm" method="POST" class="d-none">
+    <input type="hidden" name="targetStatus" id="bulkTargetStatus">
+    <div id="bulkUserIdsContainer"></div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const allUserIds = Array.from(document.querySelectorAll('.bulk-user-checkbox'))
+        .map((checkbox) => Number(checkbox.getAttribute('data-user-id')))
+        .filter((id) => Number.isInteger(id) && id > 0);
+    const selectedUserIds = new Set();
+
+    if (typeof DataTable === 'undefined') {
+        console.error('DataTable library is not loaded.');
+        return;
+    }
+
+    const usersTable = new DataTable('#userTable', {
+        order: [[8, 'desc']],
+        columnDefs: [
+            { orderable: false, targets: [0, 1, -1] }
+        ],
+        pagingType: 'full_numbers',
+        pageLength: 10,
+        deferRender: true
+    });
+
+    function refreshSerialNumbers() {
+        const pageInfo = usersTable.page.info();
+        usersTable.column(1, { page: 'current' }).nodes().each((cell, index) => {
+            cell.textContent = `#${pageInfo.start + index + 1}`;
+        });
+    }
+
+    function getCurrentPageUserIds() {
+        return usersTable.rows({ page: 'current', search: 'applied' }).nodes().toArray()
+            .map((row) => {
+                const checkbox = row.querySelector('.bulk-user-checkbox');
+                return checkbox ? Number(checkbox.getAttribute('data-user-id')) : null;
+            })
+            .filter((id) => Number.isInteger(id) && id > 0);
+    }
+
+    function syncCheckboxesOnDraw() {
+        document.querySelectorAll('.bulk-user-checkbox').forEach((checkbox) => {
+            const userId = Number(checkbox.getAttribute('data-user-id'));
+            checkbox.checked = selectedUserIds.has(userId);
+        });
+
+        const selectAllUsers = document.getElementById('selectAllUsers');
+        const currentPageIds = getCurrentPageUserIds();
+        selectAllUsers.checked = currentPageIds.length > 0 && currentPageIds.every((id) => selectedUserIds.has(id));
+    }
+
+    usersTable.on('draw', function () {
+        refreshSerialNumbers();
+        syncCheckboxesOnDraw();
+    });
+    refreshSerialNumbers();
+    syncCheckboxesOnDraw();
+
+    function getSelectedUserIds() {
+        return Array.from(selectedUserIds);
+    }
+
+    function submitBulkAction(action, confirmMessage, targetStatus = '') {
+        const selectedIds = getSelectedUserIds();
+        if (!selectedIds.length) {
+            alert('Please select at least one user.');
+            return;
+        }
+
+        if (!confirm(confirmMessage)) return;
+
+        const form = document.getElementById('bulkActionForm');
+        const idsContainer = document.getElementById('bulkUserIdsContainer');
+        const statusInput = document.getElementById('bulkTargetStatus');
+
+        idsContainer.innerHTML = '';
+        selectedIds.forEach((id) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'userIds';
+            input.value = id;
+            idsContainer.appendChild(input);
+        });
+
+        statusInput.value = targetStatus;
+        form.action = action;
+        form.submit();
+    }
+
+    const selectAllUsers = document.getElementById('selectAllUsers');
+    selectAllUsers.addEventListener('change', function () {
+        const currentPageIds = getCurrentPageUserIds();
+        if (this.checked) {
+            currentPageIds.forEach((id) => selectedUserIds.add(Number(id)));
+        } else {
+            currentPageIds.forEach((id) => selectedUserIds.delete(Number(id)));
+        }
+        syncCheckboxesOnDraw();
+    });
+
+    document.addEventListener('change', function (event) {
+        if (!event.target.classList.contains('bulk-user-checkbox')) return;
+
+        const userId = Number(event.target.getAttribute('data-user-id'));
+        if (event.target.checked) {
+            selectedUserIds.add(userId);
+        } else {
+            selectedUserIds.delete(userId);
+        }
+
+        const currentPageIds = getCurrentPageUserIds();
+        selectAllUsers.checked = currentPageIds.length > 0 && currentPageIds.every((id) => selectedUserIds.has(id));
+    });
+
+    document.getElementById('bulkActivateBtn').addEventListener('click', function () {
+        submitBulkAction('/admin-users/bulk/status', 'Activate selected users?', '1');
+    });
+
+    document.getElementById('bulkBlockBtn').addEventListener('click', function () {
+        submitBulkAction('/admin-users/bulk/status', 'Block selected users?', '0');
+    });
+
+    document.getElementById('bulkLogoutBtn').addEventListener('click', function () {
+        submitBulkAction('/admin-users/bulk/force-logout', 'Logout selected users now?');
+    });
+
+    function updateSummaryCounts(users) {
+        const total = users.length;
+        const active = users.filter((user) => Number(user.status) === 1).length;
+        const blocked = users.filter((user) => Number(user.status) !== 1).length;
+        const online = users.filter((user) => Number(user.logged_in) === 1).length;
+        const offline = total - online;
+
+        document.getElementById('totalUsersCount').textContent = total;
+        document.getElementById('activeUsersCount').textContent = active;
+        document.getElementById('blockedUsersCount').textContent = blocked;
+        document.getElementById('onlineUsersCount').textContent = online;
+        document.getElementById('offlineUsersCount').textContent = offline;
+    }
+
+    // Function to refresh user login status in real-time
+    async function refreshUserStatus() {
+        try {
+            const response = await fetch('/admin-users/api/status');
+
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data.success && data.users) {
+                    // Update each user's login status badge
+                    data.users.forEach(user => {
+                        const badge = document.querySelector(`.user-login-badge[data-user-id="${user.id}"]`);
+                        if (badge) {
+                            if (user.logged_in == 1) {
+                                badge.classList.remove('bg-secondary-focus', 'text-secondary-main');
+                                badge.classList.add('bg-success-focus', 'text-success-main');
+                                badge.innerHTML = '🟢 Online';
+                            } else {
+                                badge.classList.remove('bg-success-focus', 'text-success-main');
+                                badge.classList.add('bg-secondary-focus', 'text-danger-main');
+                                badge.innerHTML = '🔴 Offline';
+                            }
+                        }
+
+                        const statusBadge = document.querySelector(`.user-status-badge[data-user-id="${user.id}"]`);
+                        if (statusBadge) {
+                            if (Number(user.status) === 1) {
+                                statusBadge.classList.remove('bg-danger-focus', 'text-danger-main');
+                                statusBadge.classList.add('bg-success-focus', 'text-success-main');
+                                statusBadge.innerHTML = 'Active';
+                            } else {
+                                statusBadge.classList.remove('bg-success-focus', 'text-success-main');
+                                statusBadge.classList.add('bg-danger-focus', 'text-danger-main');
+                                statusBadge.innerHTML = 'Inactive';
+                            }
+                        }
+                    });
+
+                    updateSummaryCounts(data.users);
+                }
+            }
+        } catch (error) {
+            console.log('Error refreshing user status:', error);
+        }
+    }
+
+    // Refresh status every 5 seconds
+    setInterval(refreshUserStatus, 5000);
+
+    refreshUserStatus();
+    });
+</script>
